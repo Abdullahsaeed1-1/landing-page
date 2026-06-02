@@ -1,153 +1,198 @@
 "use client";
 
-import { motion } from "motion/react";
-import Reveal from "@/components/animations/Reveal";
+import { useRef } from "react";
+import gsap from "gsap";
+import { useGSAP } from "@gsap/react";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
 
-const chapters = [
+gsap.registerPlugin(useGSAP, ScrollTrigger);
+
+const story =
+  "From GETSVIEW to TenBit Solutions \u2014 a journey shaped by innovation, growth, and digital transformation.";
+
+const milestones = [
   {
-    number: "01",
-    label: "Strategy",
-    headline: "Ideas sharpened\ninto direction.",
-    body:
-      "We start with depth — your market, your users, your ambitions. Then we translate that into a precise digital roadmap with measurable outcomes.",
-    tags: ["Discovery", "Research", "Roadmap"],
+    year: "2016",
+    title: "GETSVIEW Launch",
+    description: "Technology review platform.",
   },
   {
-    number: "02",
-    label: "Design",
-    headline: "Interfaces that\ncommunicate intent.",
-    body:
-      "Every pixel is intentional. We craft experiences that feel inevitable — clean, spacious, and built to earn trust on first glance.",
-    tags: ["UI/UX", "Branding", "Motion"],
+    year: "2018",
+    title: "GETSVIEW Market",
+    description: "Multi-vendor marketplace.",
   },
   {
-    number: "03",
-    label: "Development",
-    headline: "Systems built\nto scale.",
-    body:
-      "We engineer robust, maintainable software. Fast by default, resilient under pressure, and designed to grow with your business.",
-    tags: ["Frontend", "Backend", "Automation"],
+    year: "2020",
+    title: "TenBit Solutions",
+    description: "IT solutions company established.",
+  },
+  {
+    year: "2024",
+    title: "50+ Projects",
+    description: "Successful projects delivered.",
   },
 ];
 
-function ChapterCard({ chapter, index }) {
-  return (
-    <motion.div
-      initial={{ opacity: 0, y: 40, filter: "blur(8px)" }}
-      whileInView={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-      viewport={{ once: true, amount: 0.25 }}
-      transition={{
-        duration: 0.95,
-        ease: [0.22, 1, 0.36, 1],
-        delay: index * 0.12,
-      }}
-    >
-      <div
-        className="scroll-story-card premium-hover gradient-border rounded-3xl p-8 md:p-10 h-full"
-        data-cursor="hover"
-      >
-        {/* Chapter header */}
-        <div className="flex items-start justify-between mb-8">
-          <div className="flex items-center gap-4">
-            <span
-              className="text-[0.6rem] uppercase tracking-[0.45em]"
-              style={{ color: "var(--brand-blue-3)" }}
-            >
-              {chapter.number}
-            </span>
-            <span className="h-px w-8 bg-white/15" />
-            <span className="text-[0.6rem] uppercase tracking-[0.35em] text-white/35">
-              {chapter.label}
-            </span>
-          </div>
-        </div>
-
-        {/* Headline */}
-        <h3 className="text-2xl md:text-3xl font-[var(--font-display)] text-white leading-[1.15] mb-6 whitespace-pre-line">
-          {chapter.headline}
-        </h3>
-
-        {/* Body */}
-        <p className="text-sm text-white/55 leading-[1.75] mb-8">
-          {chapter.body}
-        </p>
-
-        {/* Tags */}
-        <div className="flex flex-wrap gap-2 mt-auto">
-          {chapter.tags.map((tag) => (
-            <span
-              key={tag}
-              className="inline-flex items-center px-3 py-1 rounded-full text-[0.6rem] uppercase tracking-[0.3em] border border-white/10 text-white/40"
-            >
-              {tag}
-            </span>
-          ))}
-        </div>
-      </div>
-    </motion.div>
-  );
-}
-
 export default function ScrollStory() {
+  const sectionRef = useRef(null);
+
+  useGSAP(
+    () => {
+      const media = gsap.matchMedia();
+
+      media.add("(prefers-reduced-motion: no-preference)", () => {
+        gsap.fromTo(
+          ".story-intro",
+          { autoAlpha: 0, y: 22 },
+          {
+            autoAlpha: 1,
+            y: 0,
+            duration: 0.9,
+            ease: "power3.out",
+            scrollTrigger: {
+              trigger: ".story-stage",
+              start: "top 76%",
+              toggleActions: "play none none reverse",
+            },
+          }
+        );
+
+        gsap.fromTo(
+          ".story-word",
+          { autoAlpha: 0.15, y: 18 },
+          {
+            autoAlpha: 1,
+            y: 0,
+            stagger: 0.08,
+            ease: "none",
+            scrollTrigger: {
+              trigger: ".story-scroll-window",
+              start: "top top",
+              end: "bottom bottom",
+              scrub: 1,
+            },
+          }
+        );
+
+        gsap.fromTo(
+          ".timeline-line",
+          { scaleY: 0 },
+          {
+            scaleY: 1,
+            ease: "none",
+            scrollTrigger: {
+              trigger: ".timeline-list",
+              start: "top 78%",
+              end: "bottom 68%",
+              scrub: 1,
+            },
+          }
+        );
+
+        gsap.fromTo(
+          ".timeline-item",
+          { autoAlpha: 0, y: 24 },
+          {
+            autoAlpha: 1,
+            y: 0,
+            stagger: 0.12,
+            duration: 0.85,
+            ease: "power3.out",
+            scrollTrigger: {
+              trigger: ".timeline-list",
+              start: "top 76%",
+              toggleActions: "play none none reverse",
+            },
+          }
+        );
+
+        ScrollTrigger.refresh();
+      });
+
+      media.add("(prefers-reduced-motion: reduce)", () => {
+        gsap.set([".story-intro", ".story-word", ".timeline-item"], {
+          autoAlpha: 1,
+          y: 0,
+        });
+        gsap.set(".timeline-line", { scaleY: 1 });
+      });
+
+      return () => media.revert();
+    },
+    { scope: sectionRef }
+  );
+
   return (
-    <section className="negative-space-section premium-section-space relative">
-      {/* ── Section label ─────────────────────────────────────── */}
-      <div className="container-width">
-        <Reveal>
-          <div className="flex items-center gap-4 mb-20 md:mb-28">
-            <span className="h-px flex-1 max-w-[60px] bg-white/15" />
-            <p className="text-[0.6rem] uppercase tracking-[0.5em] text-white/30">
-              How we work
-            </p>
-          </div>
-        </Reveal>
+    <section
+      ref={sectionRef}
+      className="relative isolate border-y border-white/10 bg-black"
+    >
+      <div className="pointer-events-none absolute inset-0 overflow-hidden">
+        <div className="noise-overlay absolute inset-0 opacity-35" />
+        <div className="absolute left-1/2 top-[28rem] h-[34rem] w-[34rem] -translate-x-1/2 rounded-full bg-[#3198DA]/6 blur-[150px]" />
+      </div>
 
-        {/* ── Large editorial headline ───────────────────────── */}
-        <div className="mb-20 md:mb-28 max-w-3xl">
-          <motion.h2
-            initial={{ opacity: 0, y: 30, filter: "blur(8px)" }}
-            whileInView={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-            viewport={{ once: true, amount: 0.35 }}
-            transition={{ duration: 1.1, ease: [0.22, 1, 0.36, 1] }}
-            className="text-4xl md:text-6xl lg:text-7xl font-[var(--font-display)] text-white leading-[1.05] tracking-tight"
-          >
-            We build what&nbsp;
-            <em className="not-italic" style={{ color: "var(--brand-blue-3)" }}>
-              lasts.
-            </em>
-          </motion.h2>
-          <Reveal delay={0.15}>
-            <p className="mt-6 text-base text-white/45 max-w-md leading-[1.7]">
-              From the first brief to the final deployment — a deliberate
-              process designed for quality, speed, and longevity.
-            </p>
-          </Reveal>
-        </div>
-
-        {/* ── Chapter cards ──────────────────────────────────── */}
-        <div className="grid gap-6 md:grid-cols-3">
-          {chapters.map((chapter, index) => (
-            <ChapterCard key={chapter.number} chapter={chapter} index={index} />
-          ))}
-        </div>
-
-        {/* ── Bottom editorial strip ─────────────────────────── */}
-        <Reveal delay={0.2}>
-          <div className="mt-20 md:mt-28 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6 border-t border-white/8 pt-10">
-            <p className="text-[0.65rem] uppercase tracking-[0.5em] text-white/25">
-              TenBit Solutions — Premium Digital Studio
-            </p>
-            <div className="flex items-center gap-3">
-              <span
-                className="h-1.5 w-1.5 rounded-full"
-                style={{ backgroundColor: "var(--accent-red-2)" }}
-              />
-              <p className="text-[0.6rem] uppercase tracking-[0.4em] text-white/20">
-                Strategy → Design → Build
+      <div className="relative z-10 mx-auto max-w-360 px-5 sm:px-8 lg:px-12 xl:px-16">
+        <div className="story-scroll-window min-h-[155vh]">
+          <div className="story-stage sticky top-0 flex min-h-screen items-center py-20">
+            <div className="max-w-7xl">
+              <p className="story-intro text-[0.66rem] font-medium uppercase tracking-[0.38em] text-[#3198DA]/78 sm:text-xs">
+                From Vision to Reality
               </p>
+
+              <h2
+                className="mt-6 max-w-7xl text-[clamp(3rem,7.4vw,7.6rem)] font-medium leading-[0.98] tracking-[-0.065em] text-[#ECE9E9]"
+                aria-label={story}
+              >
+                {story.split(" ").map((word, index) => (
+                  <span
+                    key={`${word}-${index}`}
+                    aria-hidden="true"
+                    className="story-word mr-[0.2em] inline-block text-[#ECE9E9]"
+                  >
+                    {word}
+                  </span>
+                ))}
+              </h2>
             </div>
           </div>
-        </Reveal>
+        </div>
+
+        <div className="border-t border-white/10 pb-24 pt-16 sm:pb-28 sm:pt-20">
+          <div className="mb-9">
+            <p className="text-[0.66rem] font-medium uppercase tracking-[0.38em] text-[#3198DA]/74 sm:text-xs">
+              Evolution Timeline
+            </p>
+          </div>
+
+          <div className="timeline-list relative max-w-4xl">
+            <span className="timeline-line absolute bottom-5 left-[0.29rem] top-3 w-px origin-top bg-linear-to-b from-[#3198DA] via-[#2782B9]/55 to-[#6200D9]/55" />
+
+            <div className="space-y-4">
+              {milestones.map((milestone) => (
+                <article
+                  key={milestone.year}
+                  className="timeline-item relative pl-8"
+                >
+                  <span className="absolute left-0 top-7 h-2.5 w-2.5 rounded-full border border-[#3198DA]/70 bg-black shadow-[0_0_18px_rgba(49,152,218,0.4)]" />
+                  <div className="grid gap-3 rounded-2xl border border-white/8 bg-white/[0.025] px-5 py-5 backdrop-blur-sm transition-colors duration-500 hover:border-[#3198DA]/28 hover:bg-white/[0.04] sm:grid-cols-[6rem_1fr] sm:gap-6 sm:px-6">
+                    <p className="text-xs font-semibold tracking-[0.24em] text-[#3198DA]">
+                      {milestone.year}
+                    </p>
+                    <div>
+                      <h3 className="text-xl font-medium tracking-[-0.03em] text-[#ECE9E9] sm:text-2xl">
+                        {milestone.title}
+                      </h3>
+                      <p className="mt-2 max-w-xl text-sm leading-6 text-[#ECE9E9]/46">
+                        {milestone.description}
+                      </p>
+                    </div>
+                  </div>
+                </article>
+              ))}
+            </div>
+          </div>
+        </div>
       </div>
     </section>
   );

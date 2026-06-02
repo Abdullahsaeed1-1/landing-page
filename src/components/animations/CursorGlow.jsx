@@ -67,9 +67,9 @@ export default function CursorGlow() {
         animate={{ scale: hovering ? 1.25 : 1, opacity: hovering ? 0.9 : 0.65 }}
         transition={{ duration: 0.25, ease: [0.22, 1, 0.36, 1] }}
       >
-        <div className="absolute inset-0 rounded-full bg-[radial-gradient(circle_at_center,rgba(49,152,218,0.35),rgba(127,0,217,0.18),transparent_65%)]" />
-        <div className="absolute inset-[32%] rounded-full border border-white/40" />
-        <div className="absolute inset-[46%] rounded-full bg-white/80" />
+        <div className="absolute inset-0 rounded-full bg-[radial-gradient(circle_at_center,rgba(49,152,218,0.35),rgba(63,130,163,0.16),transparent_65%)]" />
+        <div className="absolute inset-[32%] rounded-full border border-[#3198DA]/40" />
+        <div className="absolute inset-[46%] rounded-full bg-[#ECE9E9]/85" />
       </motion.div>
     </motion.div>
   );
